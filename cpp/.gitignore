@@ -1,0 +1,5 @@
+*.py
+*_wrap.cpp
+_*.so
+_*.dll
+build/
