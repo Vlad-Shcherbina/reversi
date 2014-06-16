@@ -167,21 +167,6 @@ public:
         return 0;
     }
 
-    /*std::vector<int> feature_vector() const {
-        Cell my_color = move_number % 2 == 0 ? BLACK : WHITE;
-        Cell opponent_color = move_number % 2 == 0 ? WHITE : BLACK;
-        std::vector<int> result;
-        for (Cell c : cells) {
-            if (c == my_color)
-                result.push_back(1);
-            else if (c == opponent_color)
-                result.push_back(-1);
-            else
-                result.push_back(0);
-        }
-        return result;
-    }*/
-
     static int num_features() {
         return N * N;
     }
