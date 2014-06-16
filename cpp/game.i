@@ -23,7 +23,8 @@ import_array();
 %template(MovePositionPair) std::pair<Move, Position>;
 
 
-%apply (float* ARGOUT_ARRAY1, int DIM1) {(float* hz, int n)};
+%apply (int DIM1, float* IN_ARRAY1) {(int n, float* in_arr)};
+%apply (int DIM1, float* ARGOUT_ARRAY1) {(int n, float* out_arr)};
 
 %include "game.h"
 

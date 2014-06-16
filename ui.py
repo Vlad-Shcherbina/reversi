@@ -57,7 +57,7 @@ def ai_move():
         ok = position.try_move_inplace(move)
         assert ok
 
-    weights = numpy.ones((game.Position.num_features(),))
+    weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
     player = run.Player(weights)
     score, move = player.minimax(position, 6)
     if move is None:

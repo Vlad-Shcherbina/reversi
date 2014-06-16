@@ -14,8 +14,8 @@ class Player(object):
         self.weights = weights
 
     def heuristic(self, position):
-        features = position.features_array(self.weights.size)
-        return max(-1100, min(numpy.dot(features, self.weights), 1100))
+        w = position.weight_features(self.weights)
+        return max(-1100, min(w, 1100))
 
     def minimax(self, position, depth):
         global cnt
@@ -44,7 +44,7 @@ class Player(object):
 
 if __name__ == '__main__':
     print sys.argv
-    weights = numpy.ones((game.Position.num_features(),))
+    weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
 
     start = time.clock()
 

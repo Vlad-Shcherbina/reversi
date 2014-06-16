@@ -177,24 +177,40 @@ public:
         return 0;
     }
 
-    static int num_features() {
-        return N * N;
-    }
-
-    void features_array(float *hz, int n) const {
+    template<typename EmitFn>
+    void emit_features(EmitFn emit) const {
         Cell my_color = move_number % 2 == 0 ? BLACK : WHITE;
         Cell opponent_color = move_number % 2 == 0 ? WHITE : BLACK;
-        assert(n == N * N);
-        int i = 0;
         for (Cell c : cells) {
             if (c == my_color)
-                hz[i] = 1.0f;
+                emit(1.0f);
             else if (c == opponent_color)
-                hz[i] = -1.0f;
+                emit(-1.0f);
             else
-                hz[i] = 0.0f;
-            i++;
+                emit(0.0f);
         }
+    }
 
+    static int num_features() {
+        int cnt = 0;
+        initial().emit_features([&cnt](float f){ cnt ++; });
+        return cnt;
+    }
+
+    void features_array(int n, float *out_arr) const {
+        int cnt = 0;
+        emit_features([&cnt, &out_arr](float f){ *out_arr++ = f; cnt ++; });
+        assert(cnt == n);
+    }
+
+    float weight_features(int n, float *in_arr /* weights */) const {
+        float result = 0.0f;
+        int cnt = 0;
+        emit_features([&](float f){
+            result += *in_arr++ * f;
+            cnt++;
+        });
+        assert(cnt == n);
+        return result;
     }
 };
