@@ -1,11 +1,14 @@
 import flask
 import jinja2
+import numpy
+import run
 
 from cpp import build_extensions
 from cpp import game
 
 
 web_app = flask.Flask(__name__)
+web_app.secret_key = 'zzz'
 
 template_loader = jinja2.FileSystemLoader('templates')
 web_app.jinja_loader = template_loader
@@ -38,6 +41,35 @@ def choose_move():
         history=history,
         position=position,
         moves=moves)
+
+
+@web_app.route('/ai_move')
+def ai_move():
+    args = flask.request.args
+    history = args.get('history')
+    if history:
+        history = map(int, history.split(','))
+    else:
+        history = []
+
+    position = game.Position.initial()
+    for move in history:
+        ok = position.try_move_inplace(move)
+        assert ok
+
+    weights = numpy.ones((game.Position.num_features(),))
+    player = run.Player(weights)
+    score, move = player.minimax(position, 6)
+    if move is None:
+        return 'game ended'
+
+    history.append(move)
+
+    flask.flash('AI made a move {} with score {}'.format(move, score))
+
+    return flask.redirect('{}?history={}'.format(
+        flask.url_for('choose_move'),
+        ','.join(map(str, history))))
 
 
 if __name__ == '__main__':

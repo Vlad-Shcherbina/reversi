@@ -37,6 +37,17 @@
 
 </style>
 
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    <hr>
+  {% endif %}
+{% endwith %}
+
 <h1>
   {% if position.black_to_move() %}black{% else %}white{% endif %}
   to move
@@ -65,6 +76,11 @@
     Skip move
   </a>
 {% endif %}
+
+<hr>
+<a href="{{ url_for('ai_move') }}?history={{ history | join(',') }}">
+  AI move
+</a>
 
 <hr>
 <pre>{{ position }}</pre>
