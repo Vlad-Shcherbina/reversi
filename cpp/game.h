@@ -49,6 +49,12 @@ public:
         //std::cerr << "Position destructor" << std::endl;
     }
 
+    Cell at(int i, int j) const {
+        assert(0 <= i && i < N);
+        assert(0 <= j && j < N);
+        return cells[i * N + j];
+    }
+
     static Position initial() {
         Position p;
         int base = (N / 2 - 1) * (N + 1);
@@ -59,12 +65,16 @@ public:
         return p;
     }
 
+    bool black_to_move() const {
+        return move_number % 2 == 0;
+    }
+
     std::string __str__() const {
         std::ostringstream out;
         out << "Position(" << move_number;
         if (prev_skipped)
             out << ", prev skipped";
-        if (move_number % 2 == 0)
+        if (black_to_move())
             out << ", black to move" << std::endl;
         else
             out << ", white to move" << std::endl;
@@ -79,8 +89,8 @@ public:
     }
 
     bool try_flip_line(int pos, int dir) {
-        Cell my_color = move_number % 2 == 0 ? BLACK : WHITE;
-        Cell opponent_color = move_number % 2 == 0 ? WHITE : BLACK;
+        Cell my_color = black_to_move() ? BLACK : WHITE;
+        Cell opponent_color = black_to_move() ? WHITE : BLACK;
         int p = pos + dir;
         int i = 0;
         while (p >= 0 && p < N * N && abs(p % N - (p - dir) % N) <= 1) {
@@ -122,7 +132,7 @@ public:
                 flipped = true;
         }
         if (flipped) {
-            cells[pos] = move_number % 2 == 0 ? BLACK : WHITE;
+            cells[pos] = black_to_move() ? BLACK : WHITE;
             move_number++;
             prev_skipped = false;
         }
@@ -158,7 +168,7 @@ public:
 
     int leaf_score() const {
         int result = cnt_black_minus_cnt_white();
-        if (move_number % 2)
+        if (!black_to_move())
             result = -result;
         if (result > 0)
             return result + 1000;
