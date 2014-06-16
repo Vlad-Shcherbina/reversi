@@ -58,8 +58,7 @@
 {% endwith %}
 
 <h1>
-  {% if position.black_to_move() %}black{% else %}white{% endif %}
-  to move
+  {% if position.black_to_move() %}black{% else %}white{% endif %} to move
 </h1>
 
 <table>
@@ -69,7 +68,7 @@
     <td class="cell">
     {% set cell_idx = i * game.N + j %}
     {% if cell_idx in moves %}
-    <a href="choose_move?history={{ (history + [cell_idx]) | join(',') }}"
+    <a href="{{ url_for('choose_move') }}?history={{ (history + [cell_idx]) | join(',') }}"
        class="cell-link">.</a>
     {% else %}
       <div class="token{{ position.at(i, j) }}"></div>
