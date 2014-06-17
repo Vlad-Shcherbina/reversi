@@ -155,6 +155,29 @@ public:
         return result;
     }
 
+    int num_moves() const {
+        // Intended for mobility calculations, does not include skip move.
+        int result = 0;
+        Position p = *this;
+        for (int i = 0; i < N * N; i++)
+            if (p.try_move_inplace(i)) {
+                p = *this;
+                result++;
+            }
+        return result;
+    }
+
+    // Difference between the number of moves by the current player and
+    // the number of moves by the opponent (assuming it was her turn).
+    // Skip moves are not taken into consideration because they indeed don't
+    // contribute to mobility.
+    int mobility() const {
+        Position flipped = *this;
+        flipped.move_number++;
+        assert(black_to_move() != flipped.black_to_move());
+        return num_moves() - flipped.num_moves();
+    }
+
     int cnt_black_minus_cnt_white() const {
         int result = 0;
         for (Cell c : cells) {
@@ -205,6 +228,7 @@ public:
                 }
                 emit(d);
             }
+        emit(mobility());
     }
 
     static int num_features() {
