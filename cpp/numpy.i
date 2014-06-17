@@ -1,4 +1,5 @@
-/* from https://github.com/numpy/numpy/blob/master/tools/swig/numpy.i */
+/* from https://github.com/numpy/numpy/blob/master/tools/swig/numpy.i
+   see numpy.i.LICENSE.txt */
 
 /* -*- C -*-  (not really, but good for syntax highlighting) */
 #ifdef SWIGPYTHON
