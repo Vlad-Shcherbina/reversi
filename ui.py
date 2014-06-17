@@ -58,14 +58,14 @@ def ai_move():
         assert ok
 
     weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
-    player = run.Player(weights)
-    score, move = player.minimax(position, 6)
+    player = run.Player(depth=4, weights=weights)
+    move = player.pick_move(position)
     if move is None:
         return 'game ended'
 
     history.append(move)
 
-    flask.flash('AI made a move {} with score {}'.format(move, score))
+    flask.flash('AI made a move {}'.format(move))
 
     return flask.redirect('{}?history={}'.format(
         flask.url_for('choose_move'),
