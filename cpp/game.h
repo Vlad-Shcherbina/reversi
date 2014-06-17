@@ -181,14 +181,30 @@ public:
     void emit_features(EmitFn emit) const {
         Cell my_color = move_number % 2 == 0 ? BLACK : WHITE;
         Cell opponent_color = move_number % 2 == 0 ? WHITE : BLACK;
-        for (Cell c : cells) {
-            if (c == my_color)
-                emit(1.0f);
-            else if (c == opponent_color)
-                emit(-1.0f);
-            else
-                emit(0.0f);
-        }
+        assert(N % 2 == 0);
+        for (int i = 0; i < N/2; i++)
+            for (int j = 0; j <= i; j++) {
+                int mirrored[] = {
+                    i * N + j,
+                    (N - 1 - i) * N + j,
+                    i * N + (N - 1 - j),
+                    (N - 1 - i) * N + (N - 1 - j),
+                    j * N + i,
+                    (N - 1 - j) * N + i,
+                    j * N + (N - 1 - i),
+                    (N - 1 - j) * N + (N - 1 - i),
+                };
+                // We count cells on diagonals twice, but that can be
+                // addressed by assigning them half the weight.
+                int d = 0;
+                for (int idx : mirrored) {
+                    if (cells[idx] == my_color)
+                        d++;
+                    else if (cells[idx] == opponent_color)
+                        d--;
+                }
+                emit(d);
+            }
     }
 
     static int num_features() {
