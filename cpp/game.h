@@ -10,7 +10,7 @@
 #include <iostream>
 #include <utility>
 
-const int N = 6;
+const int N = 8;
 
 enum Cell {
     EMPTY = 0,
@@ -189,15 +189,23 @@ public:
         return result;
     }
 
-    int leaf_score() const {
-        int result = cnt_black_minus_cnt_white();
-        if (!black_to_move())
-            result = -result;
-        if (result > 0)
-            return result + 1000;
-        if (result < 0)
-            return result - 1000;
-        return 0;
+    int final_score() const {
+        int num_black = 0;
+        int num_white = 0;
+        for (Cell c : cells) {
+            if (c == BLACK)
+                num_black++;
+            else if (c == WHITE)
+                num_white++;
+        }
+
+        int score;
+        if (num_black > num_white)
+            score = N * N - 2 * num_white;  // empty cells count toward black
+        else
+            score = 2 * num_black - N * N;  // empty cells count toward white
+
+        return black_to_move() ? score : -score;
     }
 
     template<typename EmitFn>
