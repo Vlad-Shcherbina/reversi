@@ -7,9 +7,12 @@ import collections
 
 from cpp import build_extensions
 build_extensions.build_extensions()
+
 from cpp import game
 import bayes
 import minimax
+import other_versions
+import external_player
 
 
 def match(black_player, white_player):
@@ -21,10 +24,11 @@ def match(black_player, white_player):
             player = black_player
         else:
             player = white_player
+        if not p.generate_successors():
+            break
         move = player.pick_move(history)
         #print p, move
-        if move is None:
-            break
+        assert move is not None
         ok = p.try_move_inplace(move)
         assert ok
         history.append(move)
@@ -48,10 +52,29 @@ if __name__ == '__main__':
     weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
     black_player = minimax.Player(depth=2, weights=weights)
 
-    weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
-    weights[-1] = 0  # white player does not use mobility feature
-    white_player = minimax.Player(depth=2, weights=weights)
+    if False:
+        # local player
+        weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
+        weights[-1] = 0  # white player does not use mobility feature
+        white_player = minimax.Player(depth=2, weights=weights)
+    else:
+        # remote player
+        repo = other_versions.Repo('test')
+        repo.checkout('origin/master')
 
+        setup = """
+        import numpy
+
+        from cpp import build_extensions
+        build_extensions.build_extensions(silent=True)
+        from cpp import game
+        import minimax
+
+        weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
+        weights[-1] = 0  # don't use mobility feature
+        player = minimax.Player(depth=2, weights=weights)
+        """
+        white_player = external_player.ExternalPlayer(repo, setup)
 
     hist = collections.Counter()
 

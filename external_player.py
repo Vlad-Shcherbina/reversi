@@ -7,7 +7,9 @@ MAIN_LOOP = """
 import sys
 while True:
     history = eval(raw_input())
-    print player.pick_move(history)
+    move = player.pick_move(history)
+    assert move is not None
+    print move
     sys.stdout.flush()
 """
 
