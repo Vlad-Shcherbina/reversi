@@ -3,6 +3,7 @@ import jinja2
 import numpy
 
 from cpp import build_extensions
+build_extensions.build_extensions()
 from cpp import game
 import minimax
 

@@ -3,6 +3,7 @@ import sys
 import nose
 
 from cpp import build_extensions
+build_extensions.build_extensions()
 
 
 if __name__ == '__main__':

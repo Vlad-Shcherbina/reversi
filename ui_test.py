@@ -3,6 +3,7 @@ import ui
 import unittest
 
 from cpp import build_extensions
+build_extensions.build_extensions()
 
 
 class FlaskTestCase(unittest.TestCase):
