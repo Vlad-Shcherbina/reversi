@@ -1,10 +1,10 @@
 import flask
 import jinja2
 import numpy
-import run
 
 from cpp import build_extensions
 from cpp import game
+import minimax
 
 
 web_app = flask.Flask(__name__)
@@ -58,7 +58,7 @@ def ai_move():
         assert ok
 
     weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
-    player = run.Player(depth=4, weights=weights)
+    player = minimax.Player(depth=4, weights=weights)
     move = player.pick_move(position)
     if move is None:
         return 'game ended'

@@ -3,53 +3,12 @@ from __future__ import division
 import sys
 import time
 import numpy
-import random
 import collections
 
 from cpp import build_extensions
 from cpp import game
 import bayes
-
-
-cnt = 0
-
-
-class Player(object):
-    def __init__(self, depth, weights):
-        self.depth = depth
-        self.weights = weights
-
-    def heuristic(self, position):
-        w = position.weight_features(self.weights)
-        return max(-1100, min(w, 1100))
-
-    def pick_move(self, position):
-        return self.minimax(position, self.depth)[1]
-
-    def minimax(self, position, depth):
-        global cnt
-        cnt += 1
-
-        if depth == 0:
-            return self.heuristic(position), None
-
-        best = -1e10
-        best_move = None
-
-        successors = list(position.generate_successors())
-        random.shuffle(successors)
-        if len(successors) == 0:
-            best = 10 * position.final_score()
-
-        for q in successors:
-            move = q.first
-            next_position = q.second
-            score = -self.minimax(next_position, depth - 1)[0]
-            if score > best:
-                best_move = move
-                best = score
-
-        return best, best_move
+import minimax
 
 
 def match(black_player, white_player):
@@ -84,16 +43,16 @@ if __name__ == '__main__':
     start = time.clock()
 
     weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
-    black_player = Player(depth=2, weights=weights)
+    black_player = minimax.Player(depth=2, weights=weights)
 
     weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
     weights[-1] = 0  # white player does not use mobility feature
-    white_player = Player(depth=2, weights=weights)
+    white_player = minimax.Player(depth=2, weights=weights)
 
 
     hist = collections.Counter()
 
-    NUM_MATCHES = 200
+    NUM_MATCHES = 100
 
     score_model = bayes.GaussianConjugatePrior()
 
@@ -119,5 +78,5 @@ if __name__ == '__main__':
             model_hist[score] += 1
     print_hist(model_hist)
 
-    print cnt, 'positions explored'
-    print int(cnt / (time.clock() - start + 0.001)), 'positions per second'
+    print minimax.cnt, 'positions explored'
+    print int(minimax.cnt / (time.clock() - start + 0.001)), 'positions per second'
