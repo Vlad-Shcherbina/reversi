@@ -14,7 +14,12 @@ class Player(object):
         w = position.weight_features(self.weights)
         return max(-1100, min(w, 1100))
 
-    def pick_move(self, position):
+    def pick_move(self, history):
+        # we pass history to avoid serializing position
+        position = game.Position.initial()
+        for move in history:
+            ok = position.try_move_inplace(move)
+            assert ok
         return self.minimax(position, self.depth)[1]
 
     def minimax(self, position, depth):

@@ -52,14 +52,9 @@ def ai_move():
     else:
         history = []
 
-    position = game.Position.initial()
-    for move in history:
-        ok = position.try_move_inplace(move)
-        assert ok
-
     weights = numpy.ones((game.Position.num_features(),), dtype=numpy.float32)
     player = minimax.Player(depth=4, weights=weights)
-    move = player.pick_move(position)
+    move = player.pick_move(history)
     if move is None:
         return 'game ended'
 

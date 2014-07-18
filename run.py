@@ -14,17 +14,19 @@ import minimax
 def match(black_player, white_player):
     """ Return black player score. """
     p = game.Position.initial()
+    history = []
     while True:
         if p.black_to_move():
             player = black_player
         else:
             player = white_player
-        move = player.pick_move(p)
+        move = player.pick_move(history)
         #print p, move
         if move is None:
             break
         ok = p.try_move_inplace(move)
         assert ok
+        history.append(move)
     score = p.final_score()
     if not p.black_to_move():
         score = -score
