@@ -5,7 +5,7 @@ import unittest
 from cpp import build_extensions
 
 
-class FlaskrTestCase(unittest.TestCase):
+class FlaskTestCase(unittest.TestCase):
     def setUp(self):
         ui.web_app.config['TESTING'] = True
         self.app = ui.web_app.test_client()
